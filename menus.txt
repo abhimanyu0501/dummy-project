@@ -1,0 +1,139 @@
+ <%@page import="com.kds.KODE_DEV.services.*"%>
+   <%@page import="com.kds.KODE_DEV.domain.*"%>
+      <%@page import="com.kds.KODE_DEV.dao.*"%>
+    <%@page import="java.util.*"%>
+<!-- <style>
+/* Custom scrollbar */
+/* width */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #e7e7e7;
+    cursor:pointer;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+   /* background: #052840; */
+   cursor:pointer;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #052840; 
+    cursor:pointer;
+}
+/* Custom scrollbar */
+
+.sidenav ul li .submenu-list {
+    margin: 0px 0px 0px 0px;
+    width: 275px;
+    position: absolute;
+    padding: 0px 0px 15px;
+    z-index: 9;
+    top: 60px;
+    min-height: 85vh;
+    transition: all ease 0.5s;
+    left: 21px;
+    display: none;
+    background-color: rgba(12, 35, 63, 0.8);
+}
+.sidenav ul li .submenu-child {
+    padding: 0px 0px 15px;
+    top: 0px;
+    left: 0px;
+    width: 275px;
+    min-height: 85vh;
+    position: absolute;
+    z-index: 9;
+    display: none;
+    transition: all ease 0.5s;
+    background-color: rgba(12, 35, 63, 0.8);
+}
+.sidenav ul li:last-child {
+    margin: 0px auto 0px auto;
+    display: table;
+    float: left;
+}
+</style> -->
+
+<%
+String user_id=(String)session.getAttribute("userid");
+Menus_DAO dao1=new Menus_DAO();
+String orgId1 = (String) session.getAttribute("orgId");
+String priviledge=(String)session.getAttribute("previlege");
+priviledge=priviledge.replace(" ", "");
+String currentMenu="";
+%>
+<!-- New Tabular menu bar is Starts Here -->
+
+<div class="col-xs-2 col-sm-2 col-md-3 col-lg-3 col-xl-3 menu_btn_outer">
+    <a href="#" class="menu_btn" onclick="openNav()"><i class="fas fa-bars"></i></a>
+    <div id="mySidenav" class="left-nave-menu sidenav"> <a href="javascript:void(0)" class="tabular-menu-closebtn" onclick="closeNav()"><i class="fas fa-times"></i></a>
+    	<span class="back-submenu"><i class="fas fa-angle-left"></i> Back</span>
+        <span class="back-submenu-inner"><i class="fas fa-angle-left"></i> Back</span>
+   <ul>
+        <%
+ 			//HashMap<String, HashMap<String, ArrayList<String>>> Level1Map= new  HashMap<String, HashMap<String, ArrayList<String>>>();
+        HashMap<String, HashMap<String, ArrayList<String>>> Level1Map = (HashMap<String, HashMap<String, ArrayList<String>>>)dao1.getMenuForFaculty_11((String)session.getAttribute("orgId"),(String)session.getAttribute("userid"));		
+		Set<String> h = Level1Map.keySet();
+			for (String string : h) {
+				Map<String, ArrayList<String>> m1  = Level1Map.get(string);
+				String iconName=string.replace(" ", "");
+				iconName=iconName	+"-icon.png";
+						//iconName=iconName	+".png";
+				if ( m1 .size()>0 && ! m1.containsKey(null)) {%>
+				<li class="sub"><a href="#"><img src="../app_images/<%=iconName%>" class="img-fluid" /><p><%=string%></p><span></span></a>
+					<ul class="submenu-list" style="display: none;">
+						<%Set<String> l2 = m1.keySet(); 
+					//ArrayList<String> l3 = new ArrayList<String>();
+					for (String s : l2) {
+						ArrayList<String> l3Data = m1.get(s);
+							if (l3Data .size()!=0) {%>
+							<li class="sub-inner">
+								<a href="#"><%=s%><span></span></a>
+								<ul class="submenu-child" style="display: none;"><%
+									for (String lastMenu : l3Data) {
+										String menu1=string.replace(" ", "");
+										s=s.replace(" ", "");
+										lastMenu=lastMenu.replace(" ", "");
+										String url3=menu1+s+lastMenu+".jsp";
+										if(string.equalsIgnoreCase("Knowledge Store")){
+											url3=priviledge.trim()+menu1+s+lastMenu+".jsp";
+										}
+										System.out.println("last======="+lastMenu+"=====las==78778==="+url3);%>	
+										 <li><a href="../JSP/<%=url3%>"><%=lastMenu%></a></li>
+									<%}%>
+								</ul> <!--  inner data 3 -->
+							</li>
+							<%} else {
+							String menu1=string.replace(" ", "");				
+							s=s.replace(" ", "");
+							String url2=menu1+s+".jsp";
+							System.out.println("Show JSp page for level  2 data  (level 3 null)     " + s);%>
+							<li class="sub-inner"><a href="../JSP/<%=url2%>"><%=s%><span></span></a></li>
+							<%}
+						}%>
+					</ul>				
+				</li>
+				<% }else{
+					String menu1=string.replace(" ", "");
+					String url=menu1+".jsp";
+					if(string.equalsIgnoreCase("Dashboard") || string.equalsIgnoreCase("Dash Board") || string.equalsIgnoreCase("Dash board")){
+						currentMenu=menu1;
+						url=priviledge.trim()+menu1+".jsp";
+					}else{
+				}
+				System.out.println("url...................11111......."+url);%>
+				<li><a href="../JSP/<%=url%>"><img src="../app_images/<%=iconName%>" class="img-fluid" /><p><%=string%></p><span></span></a></li>					
+			<%}
+		}%>
+						
+		</ul>
+</div>
+</div>
+
+<!-- New Tabular menu bar is ends Here -->
